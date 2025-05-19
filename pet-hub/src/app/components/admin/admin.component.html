@@ -1,0 +1,134 @@
+<h2>Usuarios Registrados</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Foto</th>
+      <th>Nombre</th>
+      <th>Email</th>
+      <th>Rol</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let user of usersMap.values()">
+      <td><img [src]="user.photo" alt="Foto de {{ user.name }}" class="user-photo"></td>
+      
+      <td *ngIf="editingUserId !== user.id">{{ user.name }}</td>
+      <td *ngIf="editingUserId === user.id">
+        <input type="text" [(ngModel)]="user.name">
+      </td>
+
+      <td *ngIf="editingUserId !== user.id">{{ user.email }}</td>
+      <td *ngIf="editingUserId === user.id">
+        <input type="email" [(ngModel)]="user.email">
+      </td>
+
+      <td>{{ user.role }}</td>
+      <td>
+        <button *ngIf="editingUserId !== user.id" (click)="editUser(user.id)">✏️ Editar</button>
+        <button *ngIf="editingUserId === user.id" (click)="updateUser(user)">💾 Guardar</button>
+        <button *ngIf="editingUserId === user.id" (click)="cancelEditUser()">❌ Cancelar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Mascotas Registradas</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Foto</th>
+      <th>Nombre</th>
+      <th>Edad</th>
+      <th>Dueño</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let pet of petsMap.values()">
+      <td><img [src]="pet.photo" alt="Foto de {{ pet.name }}" class="pet-photo"></td>
+      
+      <td *ngIf="editingPetId !== pet.id">{{ pet.name }}</td>
+      <td *ngIf="editingPetId === pet.id">
+        <input type="text" [(ngModel)]="pet.name">
+      </td>
+      
+      <td *ngIf="editingPetId !== pet.id">{{ pet.age }} años</td>
+      <td *ngIf="editingPetId === pet.id">
+        <input type="number" [(ngModel)]="pet.age">
+      </td>
+
+      <td>
+        <img [src]="pet.ownerPhoto" alt="Foto de {{ pet.ownerName }}" class="owner-photo">
+        <br> {{ pet.ownerName }}
+      </td>
+
+      <td>
+        <button *ngIf="editingPetId !== pet.id" (click)="editPet(pet.id)">✏️ Editar</button>
+        <button *ngIf="editingPetId === pet.id" (click)="updatePet(pet)">💾 Guardar</button>
+        <button *ngIf="editingPetId === pet.id" (click)="cancelEditPet()">❌ Cancelar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Citas Médicas</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Foto Mascota</th>
+      <th>Doctor</th>
+      <th>Fecha</th>
+      <th>Notas</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let appointment of appointmentsMap.values()">
+      <td><img [src]="appointment.petPhoto" alt="Foto de {{ appointment.petName }}" class="pet-photo"></td>
+      <td>{{ appointment.doctorName }}</td>
+      <td *ngIf="editingAppointmentId !== appointment.id">{{ appointment.date | date: 'dd/MM/yyyy' }}</td>
+      <td *ngIf="editingAppointmentId === appointment.id">
+        <input type="date" [(ngModel)]="appointment.date">
+      </td>
+      <td *ngIf="editingAppointmentId !== appointment.id">{{ appointment.notes || 'Sin notas' }}</td>
+      <td *ngIf="editingAppointmentId === appointment.id">
+        <input type="text" [(ngModel)]="appointment.notes">
+      </td>
+      <td>
+        <button *ngIf="editingAppointmentId !== appointment.id" (click)="editAppointment(appointment.id)">✏️ Editar</button>
+        <button *ngIf="editingAppointmentId === appointment.id" (click)="updateAppointment(appointment)">💾 Guardar</button>
+        <button *ngIf="editingAppointmentId === appointment.id" (click)="cancelEditAppointment()">❌ Cancelar</button>
+        <button (click)="deleteAppointment(appointment.id)">🗑️ Eliminar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Agregar Nueva Mascota</h2>
+<form (submit)="createPet()">
+  <input type="text" name="name" placeholder="Nombre de la mascota" [(ngModel)]="newPet.name">
+  <input type="number" name="age" placeholder="Edad" [(ngModel)]="newPet.age">
+  <input type="text" name="petPhoto" placeholder="URL Foto" [(ngModel)]="newPet.petPhoto">
+  <br>
+  <label for="owner">Dueño</label>
+  <select name="owner" [(ngModel)]="newPet.ownerId">
+    <option value="" disabled selected>Selecciona al dueño</option>
+    <option *ngFor="let owner of usersMap.values()" [value]="owner.id">{{ owner.name }}</option>
+  </select>
+  <button type="submit">➕ Agregar Mascota</button>
+</form>
+
+<h2>Agregar Nueva Cita Médica</h2>
+<form (submit)="createAppointment()">
+  <select name="petId" [(ngModel)]="newAppointment.petId">
+    <option *ngFor="let pet of petsMap.values()" [value]="pet.id">{{ pet.name }}</option>
+  </select>
+  <select name="doctorId" [(ngModel)]="newAppointment.doctorId">
+    <option *ngFor="let doctor of doctorsMap.values()" [value]="doctor.id">{{ doctor.name }}</option>
+  </select>
+  <input type="date" name="date" [(ngModel)]="newAppointment.date">
+  <input type="text" name="notes" placeholder="Notas" [(ngModel)]="newAppointment.notes">
+  <button type="submit">➕ Agendar Cita</button>
+</form>
+
