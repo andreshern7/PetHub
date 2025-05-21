@@ -20,9 +20,9 @@ export class RegisterComponent {
   register() {
     this.authService.register(this.newUser).subscribe((response: any) => {
         alert(response.message); // 🔹 Mensaje de éxito
-        localStorage.setItem('token', response.token);
+        // localStorage.setItem('token', response.token);
         this.errorMessage = ''; // 🔹 Limpiar errores si el registro es exitoso
-        this.router.navigate(['/profile']); // Redirecciona al perfil tras registro
+        this.router.navigate(['/login']); // Redirecciona al perfil tras registro
       },
       (error) => {
         this.errorMessage = error.error?.error || 'Error en el registro'; // 🔹 Capturar mensaje del backend

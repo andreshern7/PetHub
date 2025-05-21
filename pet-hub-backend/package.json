@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "make:migrations": "knex migrate:latest",
+    "migrate:rollback": "knex migrate:rollback",
+    "migrate:status": "knex migrate:status"
   },
   "keywords": [],
   "author": "",

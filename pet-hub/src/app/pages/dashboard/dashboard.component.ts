@@ -6,7 +6,7 @@ import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 import { User } from '../../models/user.model';
-import { Pet } from '../../models/pet.model'; 
+import { Pet } from '../../models/pet.model';
 import { Appointment } from '../../models/appointment.model';
 import { Doctor } from '../../models/doctor.model';
 
@@ -33,7 +33,7 @@ export class DashboardComponent implements OnInit {
   editingPassword = false;
   editingPetId: number | null = null;
 
-  constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService) { }
 
   ngOnInit(): void {
 
@@ -123,27 +123,27 @@ export class DashboardComponent implements OnInit {
 
   updatePassword(): void {
     const token = localStorage.getItem('token');
-      if (!token || !this.userProfile) return;
+    if (!token || !this.userProfile) return;
 
-      const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
-      const body = { currentPassword: this.currentPassword, newPassword: this.newPassword };
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    const body = { currentPassword: this.currentPassword, newPassword: this.newPassword };
 
-      this.http.put(`http://localhost:3000/api/users/${this.userProfile.id}/password`, body, { headers })
-        .pipe(
-          catchError((error: HttpErrorResponse) => {
-            this.handleError(error);
-            throw error;
-          })
-        )
-        .subscribe(
-          () => {
-            alert("✅ Contraseña cambiada exitosamente");
-            this.currentPassword = '';  // 🔄 Limpiar input
-            this.newPassword = '';  // 🔄 Limpiar input
-            this.toggleEditPassword();
-          },
-          error => console.error("❌ Error al cambiar contraseña:", error)
-        );
+    this.http.put(`http://localhost:3000/api/users/${this.userProfile.id}/password`, body, { headers })
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.handleError(error);
+          throw error;
+        })
+      )
+      .subscribe(
+        () => {
+          alert("✅ Contraseña cambiada exitosamente");
+          this.currentPassword = '';  // 🔄 Limpiar input
+          this.newPassword = '';  // 🔄 Limpiar input
+          this.toggleEditPassword();
+        },
+        error => console.error("❌ Error al cambiar contraseña:", error)
+      );
   }
 
 
@@ -171,27 +171,30 @@ export class DashboardComponent implements OnInit {
       );
   }
 
-  newPet: Pet = {id: 0, name: '', age: 0, petPhoto: '', ownerId: 0 }; // 🆕 Modelo de mascota vacía
-  
+  newPet: Pet = { id: 0, name: '', age: 0, petPhoto: '', ownerId: 0 }; // 🆕 Modelo de mascota vacía
+
   addPet(): void {
-  const token = localStorage.getItem('token');
-  if (!token || !this.userProfile) return;
+    const token = localStorage.getItem('token');
+    if (!token || !this.userProfile) return;
 
-  const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
-  this.newPet.ownerId = this.userProfile.id;  // 🔹 Asignar el usuario actual como dueño
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    this.newPet.ownerId = this.userProfile.id;  // 🔹 Asignar el usuario actual como dueño
 
-  if (!this.newPet.name || !this.newPet.age || !this.newPet.petPhoto) {
-    alert("Todos los campos son obligatorios");
-    return;
-  }
 
-  this.http.post<Pet>('http://localhost:3000/api/pets', this.newPet, { headers }).subscribe(
-    (data) => {
-      this.pets.push(data);  // 🔹 Agregar la nueva mascota al array
-      this.newPet = {id: 0, name: '', age: 0, petPhoto: '', ownerId: 0 };  // 🔄 Limpiar el formulario
-    },
-    (error) => { console.error('Error al agregar mascota:', error); }
-  );
+    if (!this.newPet.name || !this.newPet.age || !this.newPet.petPhoto) {
+      alert("Todos los campos son obligatorios");
+      return;
+    }
+
+    this.http.post<Pet>('http://localhost:3000/api/pets', this.newPet, { headers }).subscribe(
+      (data) => {
+        this.pets.push(data);  // 🔹 Agregar la nueva mascota al array
+        this.newPet = { id: 0, name: '', age: 0, petPhoto: '', ownerId: 0 };  // 🔄 Limpiar el formulario
+        // 🔄 Recargar la página automáticamente después de agregar la mascota
+        setTimeout(() => window.location.reload(), 500); // 🔹 Espera 500ms antes de refrescar
+      },
+      (error) => { console.error('Error al agregar mascota:', error); }
+    );
   }
 
   updatePet(pet: Pet): void {
@@ -204,11 +207,10 @@ export class DashboardComponent implements OnInit {
 
     this.http.put(`http://localhost:3000/api/pets/${pet.id}`, body, { headers })
       .subscribe(
-        () =>
-          {
-            alert("✅ Mascota actualizada correctamente")
-            this.toggleEditPet(pet.id);
-          },
+        () => {
+          alert("✅ Mascota actualizada correctamente")
+          this.toggleEditPet(pet.id);
+        },
         (error) => this.handleError(error)
       );
   }
@@ -226,6 +228,7 @@ export class DashboardComponent implements OnInit {
       (data) => {
         this.appointments.push(data);  // 🔹 Agregar la nueva cita al array
         this.newAppointment = { id: 0, petId: 0, doctorId: 0, date: '', notes: '' };  // 🔄 Limpiar formulario
+        setTimeout(() => window.location.reload(), 500); // 🔹 Espera 500ms antes de refrescar
       },
       (error) => { console.error('Error al agregar cita médica:', error); }
     );

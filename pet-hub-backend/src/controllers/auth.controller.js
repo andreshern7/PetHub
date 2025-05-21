@@ -20,10 +20,10 @@ exports.register = async (req, res) => {
     const newUser = await knex('users').insert({ name, lastName, email, password: hashedPassword });
 
     // Generar token de autenticación
-    console.log("JWT TOKEN")
-    const token = jwt.sign({ id: newUser[0] }, process.env.JWT_SECRET, { expiresIn: '2h' });
+    // console.log("JWT TOKEN")
+    // const token = jwt.sign({ id: newUser[0] }, process.env.JWT_SECRET, { expiresIn: '2h' });
 
-    res.status(201).send({ token, message: 'Usuario registrado exitosamente' });
+    res.status(201).send({message: 'Usuario registrado exitosamente' });
 
   } catch (error) {
     res.status(500).send({ error: 'Error al registrar usuario', details: error });

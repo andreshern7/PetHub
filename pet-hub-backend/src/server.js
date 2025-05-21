@@ -8,10 +8,12 @@ dotenv.config();
 const app = express();
 
 app.use(express.json()); 
+
 app.use(cors({
   origin: 'http://localhost:4200',  // 🔹 Permitir peticiones solo desde el frontend
   credentials: true  // 🔹 Habilitar envío de cookies en las peticiones
 }));
+
 app.use(session({
   secret: process.env.SESSION,  // 🔹 Cambia esto por una clave aleatoria segura
   resave: false,  // No guarda sesión si no hubo cambios
